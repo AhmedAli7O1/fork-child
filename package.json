@@ -7,6 +7,7 @@
   "exports": {
     ".": {
       "import": "./dist/index.js",
+      "types": "./dist/index.d.ts",
       "require": "./dist/index.cjs"
     }
   },
@@ -14,13 +15,18 @@
     "start": "node --import ./register.js src/index.ts",
     "build": "tsup src/index.ts --format esm,cjs --dts",
     "test": "mocha -n import=./register.js",
-    "coverage": "nyc mocha --require @swc-node/register/esm-register src/test/*.test.ts"
+    "coverage": "nyc mocha --require @swc-node/register/esm-register src/test/*.test.ts",
+    "release": "npm run build && npm publish --access public"
   },
   "keywords": [],
   "author": "https://github.com/AhmedAli7O1",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AhmedAli7O1/fork-child.git"
+  },
   "bugs": {
-    "url": "https://github.com/nodearch/nodearch/issues",
+    "url": "https://github.com/AhmedAli7O1/fork-child/issues",
     "email": "bluemax7o1@gmail.com"
   },
   "devDependencies": {
