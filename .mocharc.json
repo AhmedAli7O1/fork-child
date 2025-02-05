@@ -1,0 +1,6 @@
+{
+  "extension": ["ts"],
+  "spec": "src/test/*.test.ts",
+  "timeout": 5000,
+  "exit": true
+}

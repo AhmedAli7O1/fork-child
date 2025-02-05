@@ -1,0 +1,14 @@
+{
+  "sourceRoot": "./src",
+  "jsc": {
+    "parser": {
+      "syntax": "typescript",
+      "tsx": false,
+      "decorators": false
+    },
+    "target": "es2020"
+  },
+  "module": {
+    "type": "es6"
+  }
+}

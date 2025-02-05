@@ -1,0 +1,9 @@
+# Ignore all files by default, to avoid accidentally publishing unintended files.
+*
+
+# Use negative patterns to bring back the specific things we want to publish.
+!/dist/**
+!tsconfig.json
+
+# Ignore certain patterns that should not get published.
+/dist/test/*.test.ts
