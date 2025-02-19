@@ -28,6 +28,46 @@ function delayedFunction() {
   });
 }
 
-register([syncFunction, asyncFunction, throwError, functionWithArgs, functionReturningPromise, delayedFunction]);
+function functionWithComplexArgs(obj: Record<string, any>, arr: any[]) {
+  return { receivedObject: obj, receivedArray: arr };
+}
+
+function functionWithLargePayload(data: any[]) {
+  return 'Large payload received';
+}
+
+async function functionWithNestedPromises() {
+  const result = await Promise.resolve(
+    await Promise.resolve('Nested promises resolved')
+  );
+  return result;
+}
+
+function functionWithNoArgs() {
+  return 'No arguments';
+}
+
+function functionWithMixedArgs(str: string, num: number, bool: boolean) {
+  return { string: str, number: num, boolean: bool };
+}
+
+function functionWithUndefinedAndNull(undefinedArg: undefined, nullArg: null) {
+  return { undefinedArg, nullArg };
+}
+
+register([
+  syncFunction,
+  asyncFunction,
+  throwError,
+  functionWithArgs,
+  functionReturningPromise,
+  delayedFunction,
+  functionWithComplexArgs,
+  functionWithLargePayload,
+  functionWithNestedPromises,
+  functionWithNoArgs,
+  functionWithMixedArgs,
+  functionWithUndefinedAndNull,
+]);
 
 export const one = 1;

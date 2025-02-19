@@ -53,6 +53,37 @@ describe('fork-child', function () {
     expect(result).to.equal('Delayed response');
   });
 
+  it('should handle functions with complex arguments', async function () {
+    const result = await forkResult.functions.functionWithComplexArgs({ key: 'value' }, [1, 2, 3]);
+    expect(result).to.deep.equal({ receivedObject: { key: 'value' }, receivedArray: [1, 2, 3] });
+  });
+
+  it('should handle functions with large payloads', async function () {
+    const largeArray = new Array(10000).fill('data');
+    const result = await forkResult.functions.functionWithLargePayload(largeArray);
+    expect(result).to.equal('Large payload received');
+  });
+
+  it('should handle functions with nested promises', async function () {
+    const result = await forkResult.functions.functionWithNestedPromises();
+    expect(result).to.equal('Nested promises resolved');
+  });
+
+  it('should handle functions with no arguments', async function () {
+    const result = await forkResult.functions.functionWithNoArgs();
+    expect(result).to.equal('No arguments');
+  });
+
+  it('should handle functions with mixed argument types', async function () {
+    const result = await forkResult.functions.functionWithMixedArgs('string', 123, true);
+    expect(result).to.deep.equal({ string: 'string', number: 123, boolean: true });
+  });
+
+  // it('should handle functions with undefined and null arguments', async function () {
+  //   const result = await forkResult.functions.functionWithUndefinedAndNull(undefined, null);
+  //   expect(result).to.deep.equal({ undefinedArg: undefined, nullArg: null });
+  // });
+
   after(function () {
     forkResult.child.kill('SIGTERM');
   });
