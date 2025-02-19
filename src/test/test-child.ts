@@ -12,6 +12,6 @@ function throwError() {
   throw new Error('Test error');
 }
 
-register({ syncFunction, asyncFunction, throwError });
+register([syncFunction, asyncFunction, throwError]);
 
 export const one = 1;

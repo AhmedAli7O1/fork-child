@@ -1,26 +1,28 @@
-export type FunctionMap = Record<string, (...args: any[]) => any>;
+import { FunctionDefinition, Message } from './interfaces.js';
 
-export interface Message {
-  id: string;
-  method: string;
-  args: any[];
+if (!process.send) {
+  throw new Error('Not running as a child process');
 }
 
-export function register(functions: FunctionMap) {
-  process.on('message', async (message: Message) => {
-    if (!message || typeof message !== 'object') return;
-    const { id, method, args } = message;
+const functionMap:  Map<string, FunctionDefinition> = new Map();
 
-    if (!id || !method || !(method in functions)) return;
+process.on('message', async (message: Message) => {
 
-    try {
-      const result = await functions[method](...args);
-      process.send?.({ id, result });
-    } catch (err: any) {
-      process.send?.({ id, error: err.message });
-    }
-  });
-}
+  const functionRef = getFunction(message);
+
+  const {id, args} = message;
+
+  try {
+    const fnReturn = functionRef(...args);
+    
+    const result = fnReturn instanceof Promise ? await fnReturn : fnReturn;
+
+    process.send({ id, result });
+    
+  } catch (err: any) {
+    process.send({ id, error: err.message });
+  }
+});
 
 process.on('disconnect', () => {
   console.log('Parent exited, shutting down child...');
@@ -31,3 +33,34 @@ process.on('SIGTERM', () => {
   console.log('Received SIGTERM, exiting...');
   process.exit(0);
 });
+
+function getFunction(message: Message) {
+  if (!message || typeof message !== 'object') return;
+  
+  const { id, functionName } = message;
+
+  if (!id || !functionName) return;
+
+  const functionRef = functionMap.get(functionName);
+
+  if (!functionRef) {
+    process.send({ id, error: `Function '${functionName}' not found` });
+    return;
+  }
+
+  return functionRef;
+}
+
+export function register(functions: FunctionDefinition[]) {
+  for (const fn of functions) {
+    if (typeof fn !== 'function') {
+      throw new Error('All registered functions must be functions');
+    }
+
+    if (functionMap.has(fn.name)) {
+      throw new Error(`Function '${fn.name}' already registered`);
+    }
+
+    functionMap.set(fn.name, fn);
+  }
+}

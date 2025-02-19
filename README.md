@@ -37,18 +37,18 @@ async function three() {
   });
 }
 
-register({ one, two, three });
+register([one, two, three]);
 ```
 
 ### **Parent Process (`parent.js`)**
 ```typescript
 import { fork } from 'fork-child';
 
-const child = fork('./child.js');
+const { functions } = fork('./child.js');
 
-await child.one();
-console.log(await child.two());
-console.log(await child.three());
+await functions.one();
+console.log(await functions.two());
+console.log(await functions.three());
 ```
 
 ## How It Works

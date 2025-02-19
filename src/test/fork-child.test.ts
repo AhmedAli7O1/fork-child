@@ -1,14 +1,14 @@
 import { fork } from '../fork.js';
 import { expect } from 'chai';
+import { ForkedFunctions } from '../interfaces.js';
 
 
 describe('fork-child', function () {
-  let child: any;
+  let child: ForkedFunctions;
 
   before(function () {
     const childUrl = new URL('test-child.ts', import.meta.url);
-    const { proxy } = fork(childUrl);
-    child = proxy;
+    child = fork(childUrl).functions;
   });
 
   it('should call a synchronous function', async function () {

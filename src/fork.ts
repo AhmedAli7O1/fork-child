@@ -1,16 +1,12 @@
 import { fork as forkProcess, ChildProcess, ForkOptions } from 'node:child_process';
+import { ForkReturn, ResponseMessage } from './interfaces.js';
+import { randomUUID } from 'node:crypto';
 
-
-interface ResponseMessage {
-  id: string;
-  result?: any;
-  error?: any;
-}
 
 export function fork(modulePath: URL | string, options?: ForkOptions) {
   const child: ChildProcess = forkProcess(modulePath, options);
   const callbacks: Map<string, (data: any) => void> = new Map();
-
+  
   child.on('message', (message: ResponseMessage) => {
     if (message.id && callbacks.has(message.id)) {
       const callback = callbacks.get(message.id);
@@ -28,12 +24,22 @@ export function fork(modulePath: URL | string, options?: ForkOptions) {
   const proxy = new Proxy(
     {},
     {
-      get(_, methodName: string) {
+      get(_, prop: string) {
+
+        if (prop === 'child') {
+          return child;
+        }
+
         return (...args: any[]) => {
           return new Promise((resolve, reject) => {
-            const id = Math.random().toString(36).substr(2, 9);
+            const id = randomUUID();
             callbacks.set(id, resolve);
-            child.send({ id, method: methodName, args });
+            try {
+              child.send({ id, functionName: prop, args });
+            } catch (err) {
+              callbacks.delete(id);
+              reject(err);
+            }
           });
         };
       },
@@ -42,14 +48,6 @@ export function fork(modulePath: URL | string, options?: ForkOptions) {
 
   return {
     child,
-    proxy,
-  };
+    functions: proxy
+  } as ForkReturn;
 }
-
-// child.kill('SIGTERM');
-
-// process.on('exit', () => {
-//   console.log('Parent exiting, killing child...');
-//   child.kill('SIGTERM');
-// });
-

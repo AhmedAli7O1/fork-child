@@ -1,6 +1,6 @@
 {
   "name": "fork-child",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A lightweight wrapper around Node.js child_process.fork() that enables seamless function calls between parent and child processes, supporting both ESM and CommonJS environments.",
   "type": "module",
   "main": "dist/index.cjs",
