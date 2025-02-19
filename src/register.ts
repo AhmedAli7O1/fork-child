@@ -1,8 +1,8 @@
 import { FunctionDefinition, Message } from './interfaces.js';
 
-if (!process.send) {
-  throw new Error('Not running as a child process');
-}
+// if (!process.send) {
+//   throw new Error('Not running as a child process');
+// }
 
 const functionMap:  Map<string, FunctionDefinition> = new Map();
 
